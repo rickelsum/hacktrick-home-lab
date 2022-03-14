@@ -1,6 +1,6 @@
 # hacktrick-web-docker
 
-My Example Docker Compose Setup I use for developing and quickly deploying web applications. In this example I will deploying the following apps as containers:
+My Example Docker Compose Setup I use for developing and quickly deploying a Wordpress site with Redis Cache. In this example I will be deploying the following apps as containers:
 
 Traefik Reverse Proxy
 Wordpress
