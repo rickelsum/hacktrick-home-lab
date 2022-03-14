@@ -183,7 +183,7 @@ Finally, we will change the variables in the .env file to match your environment
 `WP_DB_ROOT_PASSWORD=changeme`
 `WP_DB_HOST=mariadb`
 
-Now that the variables are set run we can run the containers using docker-compose:
+Now that the variables are set we can run the containers using docker-compose:
 
 `docker-compose up -d`
 
@@ -194,5 +194,7 @@ By using the admin login credentials we will be able to see the dashboard. But w
 You can monitor and manage your containers by pointing the browser to [https://containers.your_domain]
 
 You can monitor and manage your databases by pointing the browser to [https://db.your_domain]
+
+Finally Setup your new Wordpress site by going to [https://your_domain]
 
 Make sure you have the relevant A records set in your DNS
