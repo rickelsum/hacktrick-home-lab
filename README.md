@@ -110,8 +110,6 @@ We have defined our first entryPoint.
 
 The entryPoints section configures the addresses that Traefik and the proxied containers get listed on.
 
-We need to add these lines to the file
-
 `...`
 `[entryPoints.http]`
 `address = ":80"`
@@ -125,7 +123,7 @@ The HTTP entry point handles port 80, while the HTTPS entry point uses port 443 
 
 We automatically redirect all of the traffic on port 80 to the HTTPS entry point to force secure connections for all requests.
 
-Next, add the below lines to configure Let’s Encrypt certificate support for Traefik:
+Next change your email
 
 `...`
 `[acme]`
@@ -135,7 +133,8 @@ Next, add the below lines to configure Let’s Encrypt certificate support for T
 `onHostRule = true`
 `[acme.httpChallenge]`
 `entryPoint = "http"`
-Finally, we will configure the docker provider by adding these lines to the file:
+
+Finally, we will configure the docker provider by adding in your domain:
 
 `...`
 `[docker]`
@@ -146,8 +145,6 @@ Finally, we will configure the docker provider by adding these lines to the file
 The docker provider enables Traefik to act as a proxy in front of Docker containers.
 
 Save the file and exit the editor.
-
-[Facing difficulty to configure Traefik? I am happy to help you]
 
 ### Running the Traefik Container
 
