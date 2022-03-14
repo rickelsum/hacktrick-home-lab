@@ -123,7 +123,7 @@ services:
       MARIADB_DATABASE: ${WP_DB_NAME}
       MARIADB_USER: ${WP_DB_USER}
       MARIADB_PASSWORD: ${WP_DB_PASSWORD}
-      MARIADB_ROOT_PASSWORD: ${WP_DB_ROOT_PASSWORD }
+      MARIADB_ROOT_PASSWORD: ${WP_DB_ROOT_PASSWORD}
       MARIADB_HOST: ${WP_DB_HOST}
     volumes: 
       - /var/run/docker.sock:/var/run/docker.sock
