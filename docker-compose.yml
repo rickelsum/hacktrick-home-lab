@@ -1,0 +1,137 @@
+version: "3"
+
+networks:
+  web:
+    external: true
+  internal:
+    external: false
+
+services:
+  
+  ### Traefik ############################################
+  traefik:
+    image: traefik:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock 
+      - $PWD/traefik.toml:/traefik.toml 
+      - $PWD/traefik_dynamic.toml:/traefik_dynamic.toml
+      - $PWD/acme.json:/acme.json 
+    ports:
+      - 80:80
+      - 443:443
+    labels:
+      - traefik.port=8080
+    networks:
+      - web
+    restart: always
+
+  ### Wordpress ############################################  
+  wordpress:
+    image: wordpress:latest
+    restart: always
+    environment:
+      WORDPRESS_DB_HOST: ${WP_DB_HOST}:3306
+      WORDPRESS_DB_NAME: ${WP_DB_NAME}
+      WORDPRESS_DB_USER: ${WP_DB_USER}
+      WORDPRESS_DB_PASSWORD: ${WP_DB_PASSWORD}
+      WORDPRESS_TABLE_PREFIX: ${WP_DB_PREFIX}
+      WORDPRESS_CONFIG_EXTRA:
+        define( 'WP_HOME', 'https://${APP_HOST}/' );
+        define( 'WP_SITEURL', 'https://${APP_HOST}/' );
+        define( 'WP_REDIS_HOST', 'redis' );
+        define( 'WP_REDIS_PORT', 6379 );
+        define( 'COMPRESS_CSS', true );
+        define( 'COMPRESS_SCRIPTS', true );
+        define( 'CONCATENATE_SCRIPTS', true );
+        define( 'ENFORCE_GZIP', true );
+        define( 'AUTOSAVE_INTERVAL', 120 );
+        define( 'WP_POST_REVISIONS', 10);
+        define( 'EMPTY_TRASH_DAYS', 30 );
+        define( 'IMAGE_EDIT_OVERWRITE', true );
+        define( 'DISALLOW_FILE_EDIT', true );
+    volumes:
+      - ${DATA}/wordpress:/var/www/html
+      - ${DATA}/wordpress/wp-content:/var/www/html/wp-content
+    labels:
+      - traefik.http.routers.wordpress.rule=Host(`${APP_HOST}`)
+      - traefik.http.routers.wordpress.tls=true
+      - traefik.http.routers.wordpress.tls.certresolver=lets-encrypt
+      - traefik.port=80
+    networks:
+      - internal
+      - web
+    depends_on:
+      - mariadb
+      - redis
+
+  ### Adminer #####################################################
+  adminer:
+    image: adminer:latest
+    labels:
+      - traefik.http.routers.adminer.rule=Host(`db.${APP_HOST}`)
+      - traefik.http.routers.adminer.tls=true
+      - traefik.http.routers.adminer.tls.certresolver=lets-encrypt
+      - traefik.port=8081
+    networks:
+      - internal
+      - web
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - mariadb
+  
+  ### Redis ######################################################
+  redis:
+    image: redis:latest
+    restart: always
+    command:
+      - redis-server
+      - --save 60 1
+      - --loglevel warning
+      - --maxmemory 128mb
+      - --maxmemory-policy allkeys-lru
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${DATA}/redis:/var/lib/redis
+      - ${DATA}/redis:/data
+    networks:
+      - internal
+    labels:
+      - traefik.enable=false
+
+  ### Portainer ############################################
+  portainer:
+    image: portainer/portainer:latest
+    labels:
+      - traefik.http.routers.portainer.rule=Host(`containers.${APP_HOST}`)
+      - traefik.http.routers.portainer.tls=true
+      - traefik.http.routers.portainer.tls.certresolver=lets-encrypt
+      - traefik.port=9000
+    networks:
+      - internal
+      - web
+    volumes:
+       - /var/run/docker.sock:/var/run/docker.sock
+       - ${DATA}/portainer:/data
+    restart: always
+
+  ### MariaDB #####################################################
+  mariadb:
+    image: mariadb:latest
+    restart: always
+    environment:
+      MARIADB_DATABASE: ${WP_DB_NAME}
+      MARIADB_USER: ${WP_DB_USER}
+      MARIADB_PASSWORD: ${WP_DB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${WP_DB_ROOT_PASSWORD }
+      MARIADB_HOST: ${WP_DB_HOST}
+    volumes: 
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${DATA}/mysql:/var/lib/mysql
+    labels:
+      - traefik.enable=false
+    ports:
+      - 3306:3306
+    networks:
+      - internal
+
