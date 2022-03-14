@@ -60,7 +60,7 @@ Using docker consists of passing it a chain of options and commands followed by 
 
 `docker [option] [command] [arguments]`
 
-### Configuring Traefik
+## Configuring Traefik
 
 First, we need to create a configuration file and set up an encrypted password so we can access the monitoring dashboard.
 
@@ -146,7 +146,7 @@ The docker provider enables Traefik to act as a proxy in front of Docker contain
 
 Save the file and exit the editor.
 
-### Running the Traefik Container
+## Running the Docker Stack via Docker Compose
 
 Next, we need to create a Docker network for the proxy to share with containers.
 
