@@ -1,10 +1,10 @@
 [http.middlewares.simpleAuth.basicAuth]
   users = [
-    "admin:$apr1$ruca84Hq$mbjdMZBAG.KWn7vfN/SNK/"
+    "$apr1$2Q5fo.Kd$lgyydB9WWtMiwdMOfv9yw/"
   ]
 
 [http.routers.api]
-  rule = "Host(`monitor.yourdomain.com`)"
+  rule = "Host(`monitor.hacktrick.com.au`)"
   entrypoints = ["websecure"]
   middlewares = ["simpleAuth"]
   service = "api@internal"

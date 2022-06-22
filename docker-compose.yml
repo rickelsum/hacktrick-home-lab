@@ -84,12 +84,7 @@ services:
   redis:
     image: redis:latest
     restart: always
-    command:
-      - redis-server
-      - --save 60 1
-      - --loglevel warning
-      - --maxmemory 128mb
-      - --maxmemory-policy allkeys-lru
+    command: redis-server --save 20 1 --loglevel warning --maxmemory 128mb --maxmemory-policy allkeys-lru
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ${DATA}/redis:/var/lib/redis
